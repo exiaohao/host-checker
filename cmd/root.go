@@ -10,15 +10,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var initOpts c.InitOptions
+
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "host-checker",
-	Short: "A host checker",
-	Long:  "A host checker keeps unique hostname from istio gateway/virtualservice, prevent duplicated hostname caused access error",
+	Use:          "checker",
+	Short:        "host checker",
+	Long:         "Host checker keeps unique hostname from istio gateway/virtualservice, prevent duplicated hostname caused access error",
+	SilenceUsage: true,
+}
+var checkerCmd = &cobra.Command{
+	Use:   "hosts-check",
+	Short: "Start host checker service",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stopCh := setupSignalHandler()
 		watcher := new(c.Watcher)
-		watcher.Init()
+		watcher.Init(initOpts)
 		watcher.Run(stopCh)
 		return nil
 	},
@@ -35,13 +42,15 @@ func Execute() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	// fmt.Println("inited config")
+	fmt.Println("inited config")
 }
 
 // init
 func init() {
-	// fmt.Println("init")
-	cobra.OnInitialize(initConfig)
+	fmt.Println("init")
+	checkerCmd.PersistentFlags().StringVar(&initOpts.KubeConfig, "kubeconfig", "", "Path to kubeconfig file")
+
+	RootCmd.AddCommand(checkerCmd)
 }
 
 // setupSignalHandler registered for SIGTERM and SIGINT. A stop channel is returned

@@ -23,10 +23,15 @@ type Watcher struct {
 	controller cache.Controller
 }
 
+// InitOptions
+type InitOptions struct {
+	KubeConfig string
+}
+
 // Init a watcher instance
-func (w Watcher) Init() {
+func (w Watcher) Init(opts InitOptions) {
 	var err error
-	if w.kube, err = initializeKubeClient(""); err != nil {
+	if w.kube, err = initializeKubeClient(opts.KubeConfig); err != nil {
 		fmt.Println("initializeKubeClient err:", err)
 	}
 

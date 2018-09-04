@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-ADD host-checker /usr/local/bin
-RUN chmod +x /usr/local/bin/host-checker
+ADD checker /usr/local/bin
+RUN chmod +x /usr/local/bin/checker
 
-ENTRYPOINT ["/usr/local/bin/host-checker"]
+ENTRYPOINT ["/usr/local/bin/checker", "hosts-check"]
